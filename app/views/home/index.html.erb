@@ -1,0 +1,9 @@
+<h1>this is the index </h1>
+<%=current_user. subscription_choice if current_user%> 
+<%if(current_user)%>
+<%=button_to "Logout", destroy_user_session_path, data: { 'turbo-confirm': 'Are you sure?' }, :method => :delete %>
+<%else%> 
+<%=button_to "SignIn", new_user_session_path%>
+<%end%>
+
+<%=link_to "My Api Keys", keys_path if current_user%>

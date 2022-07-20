@@ -1,0 +1,11 @@
+<h1><strong>Example</strong></h1>
+
+
+<%= form_with scope: :fortytwoword, url:getexample_fortytwoword_path ,local: true do |f| %>
+<p>
+<%= f.label :word, 'enter word' %> <br>
+<%= f.text_field :word%>
+</p>
+<%=f.submit "Get Example" %>
+</p>
+<% end %>

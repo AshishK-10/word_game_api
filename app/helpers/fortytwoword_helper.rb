@@ -1,0 +1,2 @@
+module FortytwowordHelper
+end
