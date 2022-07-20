@@ -1,5 +1,9 @@
 class FortytwowordController < ApplicationController
     #add the api  counter
+    #add the authentication token here
+    #add the user api counter
+    #add the session expiry time
+
     
     def word 
         name=params[:id]
