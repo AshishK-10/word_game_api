@@ -28,11 +28,11 @@
               </div>
               <div class="px-3">
                 <p class="mb-2 h5">Joined on</p>
-                <p class="text-muted mb-0"><%=time_ago_in_words(current_user.created_at) %></p>
+                <p class="text-muted mb-0"><%=time_ago_in_words(current_user.created_at) %> ago</p>
               </div>
               <div>
-                <p class="mb-2 h5">Login at:</p>
-                <p class="text-muted mb-0"><%= time_ago_in_words(current_user.updated_at) %></p>
+                <p class="mb-2 h5">Logged in on</p>
+                <p class="text-muted mb-0"><%= time_ago_in_words(current_user.updated_at) %> ago</p>
               </div>
             </div>
           </div>
