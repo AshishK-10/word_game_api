@@ -1,10 +1,9 @@
 class FortytwowordController < ApplicationController
-    #add the api  counter
-    #add the authentication token here
-    #add the user api counter
-    #add the session expiry time
 
-    
+    before_action :authenticate_user!
+
+
+
     def word 
         name=params[:id]
         begin
@@ -12,13 +11,20 @@ class FortytwowordController < ApplicationController
         rescue =>e 
             render plain: "invalid key!"
         else
-            @current_key=Key.find(@key)
-            @current_key.count+=1
-            @current_key.save
+            @get_api_count=check_api_count(@key)
+
+            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+                render plain: "api limit reached, no more call available!"
+            else
+
             @word=Word.find(rand(1..42))
             render json: {word:@word.word }
+            end
         end
     end
+
+
+
 
     def example 
         name=params[:id]
@@ -27,10 +33,15 @@ class FortytwowordController < ApplicationController
         rescue =>e 
             render plain: "invalid key!"
         else
-            @current_key=Key.find(@key)
-            @current_key.count+=1
+            @get_api_count=check_api_count(@key)
+            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+                render plain: "api limit reached, no more call available!"
+            else
+            end
         end
     end 
+
+
 
     def getexample
         
@@ -47,6 +58,7 @@ class FortytwowordController < ApplicationController
     end
 
 
+
     def defination
         name=params[:id]
         begin
@@ -54,10 +66,16 @@ class FortytwowordController < ApplicationController
         rescue =>e 
             render plain: "invalid key!"
         else
-            @current_key=Key.find(@key)
-            @current_key.count+=1
+            @get_api_count=check_api_count(@key)
+            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+                render plain: "api limit reached, no more call available!"
+            else
+            end
         end
     end
+
+
+
 
     def getdefination
         @word=params.require(:fortytwoword).permit(:word)
@@ -74,6 +92,7 @@ class FortytwowordController < ApplicationController
     end
 
 
+
     def wordRelation
         name=params[:id]
         begin
@@ -81,10 +100,15 @@ class FortytwowordController < ApplicationController
         rescue =>e 
             render plain: "invalid key!"
         else
-            @current_key=Key.find(@key)
-            @current_key.count+=1
+            @get_api_count=check_api_count(@key)
+            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+                render plain: "api limit reached, no more call available!"
+            else
+            end
         end
     end
+
+
 
     def getWordRelation
         @word=params.require(:fortytwoword).permit(:word)
@@ -99,5 +123,20 @@ class FortytwowordController < ApplicationController
         render json: {Relations:@get_relations.relationshipType}
        end
     end
+
+
+
+   private
+
+   
+   def check_api_count(key)
+            @current_key=Key.find(key)
+            return @current_key.count if @current_key.count >= 500 && current_user.subscription_choice == 1
+            return @current_key.count if @current_key.count >= 2000 && current_user.subscription_choice == 2
+            return @current_key.count if @current_key.count >= 10000 && current_user.subscription_choice == 3
+            @current_key.count+=1
+            @current_key.save
+            return @current_key.count
+   end
 
 end
