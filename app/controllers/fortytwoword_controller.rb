@@ -1,6 +1,5 @@
 class FortytwowordController < ApplicationController
-    #authentication before any action
-    before_action :authenticate_user!
+    
 
 
 
