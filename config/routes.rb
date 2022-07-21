@@ -13,5 +13,6 @@ Rails.application.routes.draw do
     post :getdefination,on: :member
     post :getWordRelation,on: :member
 end
+get 'home/profile'
   root "home#index"
 end

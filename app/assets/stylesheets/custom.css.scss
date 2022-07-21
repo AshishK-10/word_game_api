@@ -1,0 +1,41 @@
+.navbar{
+  background-color: black !important;
+}
+.nav-link{
+  color: white !important;
+}
+
+#title{
+  float: left;
+  font-size: 1.7em;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  font-weight: bold;
+}
+
+#home-container{
+margin-top: 25px;   
+}
+
+.jumbotron{
+  background-image:url('https://images.unsplash.com/photo-1652353292901-c9b06631b231?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDM3M3xDRHd1d1hKQWJFd3x8ZW58MHx8fHw%3D&auto=format&fit=crop&w=600&q=60');
+  background-size: cover;
+height: 425px;
+}
+
+#page-content {
+  flex: 1 0 auto;
+  background-color: lightgray;
+
+}
+.logout-btn{
+  background-color: black;
+  color: white;
+}
+
+.sign_up_submit{
+  background-color: #007BFF;
+  border-color: #007BFF;
+  color: #fff;
+}
