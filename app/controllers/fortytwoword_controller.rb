@@ -2,6 +2,12 @@ class FortytwowordController < ApplicationController
   
     before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
     before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
+    
+    # for word: /fortytwoword/word?api_key={}
+    # for word example: /fortytwoword/word/example?api_key={}
+    # for word defination: /fortytwoword/word/defination?api_key={}
+    # for word relation: /fortytwoword/word/relation?api_key={}
+
 
 
     #used to find the word json 
@@ -54,8 +60,13 @@ class FortytwowordController < ApplicationController
          else
           @key_details.count = @get_api_count
           @key_details.save
-          @get_word = Word.find_by(word:@word)
-          render json: {example: @get_word.example}
+          begin         #handles if word doesnt exit in db
+          @get_word = Word.find_by(word:@word).example
+          rescue => exception
+            render plain: "invalid word!"
+          else
+          render json: {example: @get_word}
+          end
          end
         end
     end 
@@ -81,11 +92,17 @@ class FortytwowordController < ApplicationController
             else
               @key_details.count = @get_api_count
               @key_details.save
-              @get_word = Word.find_by(word:@word)
-              render json: {defination: @get_word.defination}
+              begin
+                @get_word = Word.find_by(word:@word).defination
+              rescue => exception
+                  render plain: "invalid word!"
+              else
+                 render json: {defination: @get_word}
+              end
             end
         end
     end
+
 
 
 
@@ -106,8 +123,13 @@ class FortytwowordController < ApplicationController
             else
               @key_details.count = @get_api_count
               @key_details.save
-              @get_word = Word.find_by(word:@word)
-              render json: {defination: @get_word.relationshipType}
+              begin  #handles if word doesnt exit in db
+                @get_word = Word.find_by(word:@word).relationshipType
+              rescue => exception
+                  render plain: "invalid word!"
+              else
+                render json: {word_relation: @get_word}
+              end
             end
         end
     end
