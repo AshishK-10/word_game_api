@@ -149,6 +149,14 @@ class FortytwowordController < ApplicationController
     end
 
 
+    #this show method handles the case when page doesn't exist
+    def show
+
+      render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
+  
+      end
+
+
 
    private
 
@@ -164,5 +172,8 @@ class FortytwowordController < ApplicationController
    def set_key_from_id  #sets the name of the key
     @name_of_key = params[:id]
    end
+
+   
+   
 
 end

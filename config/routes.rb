@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     post :getexample,on: :member
     post :getdefination,on: :member
     post :getWordRelation,on: :member
+    match '*unmatched', to: 'application#route_not_found', via: :all
 end
 get 'home/profile'
   root "home#index"
