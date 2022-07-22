@@ -35,6 +35,8 @@ class FortytwowordController < ApplicationController
 
     #used to get the examples of a particular word
     def example 
+      @word =params[:word]
+       #return render json: "#{word},#{@name_of_key} "
         begin
           @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id #autheticate the key in db
         rescue => exception 
@@ -51,28 +53,16 @@ class FortytwowordController < ApplicationController
          else
           @key_details.count = @get_api_count
           @key_details.save
+          @get_word = Word.find_by(word:@word)
+          render json: {example: @get_word.example}
          end
         end
     end 
 
 
-    #post method to get the word example
-    def getexample
-        @word = params.require(:fortytwoword).permit(:word)  #permits the word to be searched
-        @word = @word["word"]
-        begin
-             @get_word = Word.find_by(word:@word) #checks if word exists in db
-             raise Exception.new  "Word doesn't exist!" if !@get_word.example
-        rescue => exception
-        render plain: "invalid word!"
-        else
-        render json: {examples:@get_word.example}
-        end
-    end
-
-
     # gets the word defination
     def defination
+      @word =params[:word]
        begin
         @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
        rescue => exception
@@ -90,30 +80,17 @@ class FortytwowordController < ApplicationController
             else
               @key_details.count = @get_api_count
               @key_details.save
+              @get_word = Word.find_by(word:@word)
+              render json: {defination: @get_word.defination}
             end
         end
     end
 
 
 
-   #post methos to get the word's defination
-    def getdefination
-        @word = params.require(:fortytwoword).permit(:word) #permits the word
-        @word = @word["word"]
-        begin
-            @get_word = Word.find_by(word:@word)
-            raise Exception.new  "Word doesn't exist!" if !@get_word.defination
-       rescue => exception
-       render plain: "invalid word!"
-       else
-        @get_defination = Word.find_by(word:@word)
-        render json: {Definitions:@get_defination.defination}
-       end
-    end
-
-
   #gets the word relations i.e antonyms and synonyms
     def wordRelation
+      @word =params[:word]
         begin
           @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
         rescue =>e 
@@ -128,25 +105,12 @@ class FortytwowordController < ApplicationController
             else
               @key_details.count = @get_api_count
               @key_details.save
+              @get_word = Word.find_by(word:@word)
+              render json: {defination: @get_word.relationshipType}
             end
         end
     end
 
-
-#post method to get the relations of the word
-    def getWordRelation
-      @word = params.require(:fortytwoword).permit(:word)
-      @word = @word["word"]
-      begin
-        @get_word = Word.find_by(word:@word)
-          raise Exception.new  "Word doesn't exist!" if !@get_word.relationshipType
-      rescue =>exception
-       render plain: "invalid word!"
-      else
-        @get_relations=Word.find_by(word:@word)
-        render json: {Relations:@get_relations.relationshipType}
-       end
-    end
 
 
     #this show method handles the case when page doesn't exist
@@ -155,6 +119,12 @@ class FortytwowordController < ApplicationController
       render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
   
       end
+
+      def index
+
+        render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
+    
+        end
 
 
 
@@ -170,7 +140,7 @@ class FortytwowordController < ApplicationController
    end
 
    def set_key_from_id  #sets the name of the key
-    @name_of_key = params[:id]
+    @name_of_key = params[:api_key]
    end
 
    

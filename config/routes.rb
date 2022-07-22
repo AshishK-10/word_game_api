@@ -3,10 +3,12 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   resources :keys
   # Defines the root path route ("/")
-
+  get 'fortytwoword/word'
+  get 'fortytwoword/:word/example',to: "fortytwoword#example" 
+  get 'fortytwoword/:word/defination',to: "fortytwoword#defination" 
+  get 'fortytwoword/:word/relation',to: "fortytwoword#wordRelation" 
   resources :fortytwoword do
-    get :word, on: :member
-    get :example,on: :member
+    #get :example,on: :member
     get :defination, on: :member
     get :wordRelation, on: :member
     post :getexample,on: :member

@@ -2,7 +2,6 @@
 <h2> Your Key: <%=@key.name%> </h2>
 <p><h3>
 <%=@key.count%> times used till now!</h3> </p>
-<%=link_to "Find Word",word_fortytwoword_path(@key.name)%><br>
 <%=link_to "Get Word Example",example_fortytwoword_path(@key.name)%><br>
 <%=link_to "Get Word Definition",defination_fortytwoword_path(@key.name)%><br>
 <%=link_to "Get Word Relation", wordRelation_fortytwoword_path(@key.name)%>
