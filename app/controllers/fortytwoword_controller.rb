@@ -8,7 +8,7 @@ class FortytwowordController < ApplicationController
     def word 
        begin
           @key = Key.find_by(name:@name_of_key).id 
-        rescue => e 
+        rescue => exception 
             render plain: "invalid key!"
         else
           @key_details = Key.find(@key);  
@@ -19,7 +19,7 @@ class FortytwowordController < ApplicationController
           @user_subscription_plan = User.find(@key_user).subscription_choice
 
           #function returns and check the api call limit
-          
+
           @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
           if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
             render plain: "api limit reached, no more call available!"
@@ -121,6 +121,7 @@ class FortytwowordController < ApplicationController
       def index
         render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
         end
+
 
    private
 
