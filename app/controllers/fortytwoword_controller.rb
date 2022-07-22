@@ -19,6 +19,7 @@ class FortytwowordController < ApplicationController
           @user_subscription_plan = User.find(@key_user).subscription_choice
 
           #function returns and check the api call limit
+          
           @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
           if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
             render plain: "api limit reached, no more call available!"
@@ -35,7 +36,7 @@ class FortytwowordController < ApplicationController
 
     #used to get the examples of a particular word
     def example 
-      @word =params[:word]
+      @word = params[:word]
        #return render json: "#{word},#{@name_of_key} "
         begin
           @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id #autheticate the key in db
@@ -62,7 +63,7 @@ class FortytwowordController < ApplicationController
 
     # gets the word defination
     def defination
-      @word =params[:word]
+      @word = params[:word]
        begin
         @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
        rescue => exception
@@ -90,7 +91,7 @@ class FortytwowordController < ApplicationController
 
   #gets the word relations i.e antonyms and synonyms
     def wordRelation
-      @word =params[:word]
+      @word = params[:word]
         begin
           @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
         rescue =>e 
@@ -115,18 +116,11 @@ class FortytwowordController < ApplicationController
 
     #this show method handles the case when page doesn't exist
     def show
-
       render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
-  
       end
-
       def index
-
         render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
-    
         end
-
-
 
    private
 
@@ -142,8 +136,5 @@ class FortytwowordController < ApplicationController
    def set_key_from_id  #sets the name of the key
     @name_of_key = params[:api_key]
    end
-
-   
-   
 
 end
