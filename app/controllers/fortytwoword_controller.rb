@@ -1,21 +1,30 @@
 class FortytwowordController < ApplicationController
-    #authentication before any action
-    before_action :authenticate_user!
-
+  
+    before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
+    before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
 
 
     #used to find the word json 
     def word 
-      name = params[:id]
        begin
-          @key = Key.find_by(name:name, user_id: current_user.id).id 
+          @key = Key.find_by(name:@name_of_key).id 
         rescue => e 
             render plain: "invalid key!"
         else
-          @get_api_count = check_api_count(@key) #returns and check the api call limit
-          if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+          @key_details = Key.find(@key);  
+          @key_user = @key_details.user_id  #user of this key
+
+          #subscription taken by the user is stored in @user_subscription_plan variable
+
+          @user_subscription_plan = User.find(@key_user).subscription_choice
+
+          #function returns and check the api call limit
+          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
+          if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
             render plain: "api limit reached, no more call available!"
           else
+            @key_details.count = @get_api_count
+            @key_details.save
             @word=Word.find(rand(1..42))    #find random words
             render json: {word:@word.word } 
          end
@@ -26,16 +35,22 @@ class FortytwowordController < ApplicationController
 
     #used to get the examples of a particular word
     def example 
-        name = params[:id]  #gets the key
         begin
-          @key = Key.find_by(name:name, user_id: current_user.id).id #autheticate the key in db
+          @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id #autheticate the key in db
         rescue => exception 
           render plain: "invalid key!"
         else
-          @get_api_count = check_api_count(@key)
-          if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+          @key_details = Key.find(@key);
+          @key_user = @key_details.user_id
+          @user_subscription_plan = User.find(@key_user).subscription_choice
+
+          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
+
+          if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
                 render plain: "api limit reached, no more call available!"
          else
+          @key_details.count = @get_api_count
+          @key_details.save
          end
         end
     end 
@@ -58,19 +73,23 @@ class FortytwowordController < ApplicationController
 
     # gets the word defination
     def defination
-      name = params[:id] #gets the key
        begin
-        @key = Key.find_by(name:name, user_id: current_user.id).id 
+        @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
        rescue => exception
         render plain: "invalid key!"
         else
-          @get_api_count = check_api_count(@key) #returns the api count
+          @key_details = Key.find(@key);
+          @key_user = @key_details.user_id
+          @user_subscription_plan = User.find(@key_user).subscription_choice
+          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
 
              #checks the api limit according to the api subscription
 
-            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+            if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
                 render plain: "api limit reached, no more call available!"
             else
+              @key_details.count = @get_api_count
+              @key_details.save
             end
         end
     end
@@ -95,16 +114,20 @@ class FortytwowordController < ApplicationController
 
   #gets the word relations i.e antonyms and synonyms
     def wordRelation
-        name = params[:id]
         begin
-          @key = Key.find_by(name:name, user_id: current_user.id).id 
+          @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
         rescue =>e 
           render plain: "invalid key!"
         else
-          @get_api_count=check_api_count(@key)
-            if ((@get_api_count >= 500 && current_user.subscription_choice == 1) ||  ( @get_api_count >= 2000 and current_user.subscription_choice == 2) || ( @get_api_count >= 10000 and current_user.subscription_choice == 3))
+          @key_details = Key.find(@key);
+          @key_user = @key_details.user_id
+          @user_subscription_plan = User.find(@key_user).subscription_choice
+          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan)
+            if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
                 render plain: "api limit reached, no more call available!"
             else
+              @key_details.count = @get_api_count
+              @key_details.save
             end
         end
     end
@@ -130,14 +153,16 @@ class FortytwowordController < ApplicationController
    private
 
    #checks the api count and updated them according to users subscription
-   def check_api_count(key)
-     @current_key = Key.find(key)
-     return @current_key.count if @current_key.count >= 500 && current_user.subscription_choice == 1
-     return @current_key.count if @current_key.count >= 2000 && current_user.subscription_choice == 2
-     return @current_key.count if @current_key.count >= 10000 && current_user.subscription_choice == 3
-     @current_key.count+=1
-     @current_key.save
-     return @current_key.count
+   def check_api_count(api_key_count,current_user_subscription_plan)
+     return api_key_count if api_key_count >= 500 && current_user_subscription_plan == 1
+     return api_key_count if api_key_count >= 2000 && current_user_subscription_plan == 2
+     return api_key_count if api_key_count >= 10000 && current_user_subscription_plan == 3
+     api_key_count+=1
+     return api_key_count
+   end
+
+   def set_key_from_id  #sets the name of the key
+    @name_of_key = params[:id]
    end
 
 end

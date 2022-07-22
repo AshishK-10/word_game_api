@@ -15,4 +15,7 @@ Rails.application.routes.draw do
 end
 get 'home/profile'
   root "home#index"
+
+  match '*unmatched', to: 'application#route_not_found', via: :all
 end
+
