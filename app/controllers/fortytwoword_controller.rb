@@ -1,163 +1,62 @@
 class FortytwowordController < ApplicationController
-  
-    before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
-    before_action :set_key_from_id, only: [:word, :example, :defination, :destroy, :wordRelation]
+  before_action :set_key_from_params, only: [:word, :example, :defination,:wordRelation]
+  before_action :set_word_from_params, only: [:example, :defination,:wordRelation]
+  before_action :autheticate_key, only: [:word, :example, :defination,:wordRelation]
+  before_action :set_key_details, only: [:word, :example, :defination,:wordRelation]
+  # for word: /fortytwoword/word?api_key={}
+  # for word example: /fortytwoword/word/example?api_key={}
+  # for word defination: /fortytwoword/word/defination?api_key={}
+  # for word relation: /fortytwoword/word/relation?api_key={}
+
+def word #used to find the word json 
+    result=Word.check_api_count("word") 
+    print_result("word",result)
+end
+
+def example  #used to get the examples of a particular word
+    result=Word.check_api_count("example") 
+    print_result("example",result)
+end 
+
+def defination # gets the word defination
+    result=Word.check_api_count("defination") 
+    print_result("defination",result)
+end
+
+def wordRelation #gets the word relations i.e antonyms and synonyms
+    result=Word.check_api_count("relation") 
+    print_result("relation",result)
+end
     
-    # for word: /fortytwoword/word?api_key={}
-    # for word example: /fortytwoword/word/example?api_key={}
-    # for word defination: /fortytwoword/word/defination?api_key={}
-    # for word relation: /fortytwoword/word/relation?api_key={}
+def show #this show method handles the case when page doesn't exist
+  render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
+end
 
+private
+  
+  def set_key_from_params
+    Word.set_key_from_params(params[:api_key])
+  end
 
+  def set_word_from_params 
+    Word.set_word_from_params(params[:word])
+  end
 
-    #used to find the word json 
-    def word 
-       begin
-          @key = Key.find_by(name:@name_of_key).id 
-        rescue => exception 
-            render plain: "invalid key!"
-        else
-          @key_details = Key.find(@key);  
-          @key_user = @key_details.user_id  #user of this key
+  def autheticate_key
+    result = Word.authenticate_key
+    render plain: result if result
+  end
 
-          #subscription taken by the user is stored in @user_subscription_plan variable
+  def set_key_details
+    Word.set_key_details
+  end
 
-          @user_subscription_plan = User.find(@key_user).subscription_choice
-
-          #function returns and check the api call limit
-
-          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
-          if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
-            render plain: "api limit reached, no more call available!"
-          else
-            @key_details.count = @get_api_count
-            @key_details.save
-            @word=Word.find(rand(1..42))    #find random words
-            render json: {word:@word.word } 
-         end
-        end
+  def print_result(choice,word) #word remains nill when no such word exists
+    if word 
+      result = Word.print_result(choice,word)
+      render json: result 
+    else
+      render plain: "invalid word"
     end
-
-
-
-    #used to get the examples of a particular word
-    def example 
-      @word = params[:word]
-       #return render json: "#{word},#{@name_of_key} "
-        begin
-          @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id #autheticate the key in db
-        rescue => exception 
-          render plain: "invalid key!"
-        else
-          @key_details = Key.find(@key);
-          @key_user = @key_details.user_id
-          @user_subscription_plan = User.find(@key_user).subscription_choice
-
-          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
-
-          if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
-                render plain: "api limit reached, no more call available!"
-         else
-          @key_details.count = @get_api_count
-          @key_details.save
-          begin         #handles if word doesnt exit in db
-          @get_word = Word.find_by(word:@word).example
-          rescue => exception
-            render plain: "invalid word!"
-          else
-          render json: {example: @get_word}
-          end
-         end
-        end
-    end 
-
-
-    # gets the word defination
-    def defination
-      @word = params[:word]
-       begin
-        @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
-       rescue => exception
-        render plain: "invalid key!"
-        else
-          @key_details = Key.find(@key);
-          @key_user = @key_details.user_id
-          @user_subscription_plan = User.find(@key_user).subscription_choice
-          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan) 
-
-             #checks the api limit according to the api subscription
-
-            if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
-                render plain: "api limit reached, no more call available!"
-            else
-              @key_details.count = @get_api_count
-              @key_details.save
-              begin
-                @get_word = Word.find_by(word:@word).defination
-              rescue => exception
-                  render plain: "invalid word!"
-              else
-                 render json: {defination: @get_word}
-              end
-            end
-        end
-    end
-
-
-
-
-  #gets the word relations i.e antonyms and synonyms
-    def wordRelation
-      @word = params[:word]
-        begin
-          @key = Key.find_by(name:@name_of_key, user_id: current_user.id).id 
-        rescue =>e 
-          render plain: "invalid key!"
-        else
-          @key_details = Key.find(@key);
-          @key_user = @key_details.user_id
-          @user_subscription_plan = User.find(@key_user).subscription_choice
-          @get_api_count = check_api_count(@key_details.count,@user_subscription_plan)
-            if ((@get_api_count >= 500 && @user_subscription_plan == 1) ||  ( @get_api_count >= 2000 and @user_subscription_plan == 2) || ( @get_api_count >= 10000 and @user_subscription_plan == 3))
-                render plain: "api limit reached, no more call available!"
-            else
-              @key_details.count = @get_api_count
-              @key_details.save
-              begin  #handles if word doesnt exit in db
-                @get_word = Word.find_by(word:@word).relationshipType
-              rescue => exception
-                  render plain: "invalid word!"
-              else
-                render json: {word_relation: @get_word}
-              end
-            end
-        end
-    end
-
-
-
-    #this show method handles the case when page doesn't exist
-    def show
-      render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
-      end
-      def index
-        render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
-        end
-
-
-   private
-
-   #checks the api count and updated them according to users subscription
-   def check_api_count(api_key_count,current_user_subscription_plan)
-     return api_key_count if api_key_count >= 500 && current_user_subscription_plan == 1
-     return api_key_count if api_key_count >= 2000 && current_user_subscription_plan == 2
-     return api_key_count if api_key_count >= 10000 && current_user_subscription_plan == 3
-     api_key_count+=1
-     return api_key_count
-   end
-
-   def set_key_from_id  #sets the name of the key
-    @name_of_key = params[:api_key]
-   end
-
+  end
 end

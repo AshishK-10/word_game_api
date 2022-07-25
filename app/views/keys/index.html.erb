@@ -3,7 +3,7 @@
 <%else%> 
 <%=button_to "SignIn", new_user_session_path%>
 <%end%>
-<%@keys.each{|x|%>
+<%@keys_from_user.each{|x|%>
 <div>
 <h2>
 Key:
