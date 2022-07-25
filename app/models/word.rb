@@ -33,7 +33,6 @@ class Word < ApplicationRecord
        elsif (what_we_need_to_show == "relation" )
          show_detail_from_word("getRelation")
        else
-         #render plain: "something went wrong!"
          return "something went wrong"
        end
      end
