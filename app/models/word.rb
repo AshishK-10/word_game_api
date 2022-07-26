@@ -24,7 +24,6 @@ class Word < ApplicationRecord
        @key_details.save
        if ( what_we_need_to_show == "word" )
         random_word = Word.find(rand(1..42))
-        #render json: {word: word.word}
        return random_word.word 
        elsif ( what_we_need_to_show == "defination" )
          show_detail_from_word("defination")
@@ -33,7 +32,6 @@ class Word < ApplicationRecord
        elsif (what_we_need_to_show == "relation" )
          show_detail_from_word("getRelation")
        else
-         #render plain: "something went wrong!"
          return "something went wrong"
        end
      end
