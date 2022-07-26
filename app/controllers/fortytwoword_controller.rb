@@ -28,10 +28,6 @@ def wordRelation #gets the word relations i.e antonyms and synonyms
     print_result("relation",result)
 end
     
-def show #this show method handles the case when page doesn't exist
-  render file: Rails.public_path.join('404.html'), status: :not_found, layout: false
-end
-
 private
   
   def set_key_from_params
