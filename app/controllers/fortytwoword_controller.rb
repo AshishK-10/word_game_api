@@ -20,7 +20,6 @@ class FortytwowordController < ApplicationController
   end
 
   private
-
   def authenticate_key
     render plain: "invalid key" if !Key.authenticate(params[:api_key])
   end
