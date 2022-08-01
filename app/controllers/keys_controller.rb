@@ -9,12 +9,8 @@ class KeysController < ApplicationController
   end
 
   def new
-    new_key = current_user.keys.new
-    if new_key.save
-      redirect_to keys_path
-    else
-      render plain: new_key.errors.full_messages
-    end
+    new_key = current_user.keys.create
+    redirect_to keys_path(new_key)
   end
 
   def show; end
