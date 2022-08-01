@@ -1,21 +1,15 @@
-<%if(current_user)%>
-<%=button_to "Logout", destroy_user_session_path, data: { 'turbo-confirm': 'Are you sure?' }, :method => :delete %>
-<%else%> 
-<%=button_to "SignIn", new_user_session_path%>
-<%end%>
-<%@keys_from_user.each{|x|%>
-<div>
-<h2>
-Key:
-<%=x.name%>
-</h2>
-<h3>
-Counter:
-<%=x.count%>
-</h3>
-<%=button_to "Delete this key", key_path(x), data: { 'turbo-confirm': 'Are you sure?' }, :method => :delete %>
-<%=link_to "Use this Key",key_path(x)%>
-</div>
+<%@keys_from_user.each{|key|%>
+  <div>
+    <h2>
+      Key:
+      <%=key.name%>
+    </h2>
+    <h3>
+      Counter:
+      <%=key.count%>
+    </h3>
+    <%=button_to "Delete this key", key_path(key),:method => :delete %>
+    <%=link_to "Use this Key",key_path(key)%>
+  </div>
 <%}%>
-
-<%=link_to "Add New Key", new_key_path if @current_key_count<@maximum_api_keys_user_can_make || @maximum_api_keys_user_can_make==1000%>
+<%=link_to "Add New Key", new_key_path if @key_count<@max_keys || @max_keys==1000%>

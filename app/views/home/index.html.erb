@@ -1,20 +1,21 @@
 <div class="container" id="home-container">
-<div class="jumbotron text-center text-white">
-<%if current_user%>
-  <h1 class="display-4"><strong><%=current_user.name%></strong></h1>
-  <h5 class="display-4"><strong><%=current_user.username%></strong></h5>
-  <%else%>
-  <h1 class="display-4"><strong>Sign In to get Started!</strong></h1>
-  <%end%>
-  <p class="lead">This is a api that helps you to find words and their relations,definations and examples.</p>
-  <hr class="my-4">
-  <p>To find the api key you can use, Click below:</p>
-  <%if current_user %>
-  <a class="btn btn-primary btn-lg" href="/keys" role="button">Get My keys</a>
-  <% else %>
-  <a class="btn btn-primary btn-lg" href="/users/sign_in" role="button">LogIn</a>
-  <%end%>
-</div>
+  <div class="jumbotron text-center text-white">
+
+    <%if current_user%>
+      <h1 class="display-4"><strong><%=current_user.name%></strong></h1>
+      <h5 class="display-4"><strong><%=current_user.username%></strong></h5>
+    <%else%>
+      <h1 class="display-4"><strong>Sign In to get Started!</strong></h1>
+    <%end%>
+    <p class="lead">This is a api that helps you to find words and their relations,definations and examples.</p>
+    <hr class="my-4">
+    <p>To find the api key you can use, Click below:</p>
+    <%if current_user %>
+      <a class="btn btn-primary btn-lg" href="/keys" role="button">Get My keys</a>
+    <% else %>
+      <a class="btn btn-primary btn-lg" href="/users/sign_in" role="button">LogIn</a>
+    <%end%>
+  </div>
 </div>
 
 <nav class="navbar fixed-bottom navbar-light bg-light">

@@ -1,9 +1,8 @@
 class Word < ApplicationRecord
-    serialize :defination
-    serialize :example
-    serialize :relationshipType
+  serialize :defination
+  serialize :example
+  serialize :relationshipType
 
-  
   after_initialize do |word|
     word.defination= [] if word.defination == nil
     word.example= [] if word.example == nil
@@ -12,19 +11,19 @@ class Word < ApplicationRecord
 
   def self.check_api_count(what_we_need_to_show)
      begin
-       if ((@key_details.count >= 500 && @user_subscription_plan == 1) ||  
-           (@key_details.count >= 2000 && @user_subscription_plan == 2) || 
+       if ((@key_details.count >= 500 && @user_subscription_plan == 1) ||
+           (@key_details.count >= 2000 && @user_subscription_plan == 2) ||
            (@key_details.count >= 10000 && @user_subscription_plan == 3))
            raise "Api limit reached"
        end
      rescue => exception
        return render plain: exception
-     else 
+     else
        @key_details.count += 1
        @key_details.save
        if ( what_we_need_to_show == "word" )
         random_word = Word.find(rand(1..42))
-       return random_word.word 
+       return random_word.word
        elsif ( what_we_need_to_show == "defination" )
          show_detail_from_word("defination")
        elsif (what_we_need_to_show == "example" )
@@ -45,12 +44,12 @@ class Word < ApplicationRecord
     rescue => exception
       return
     else
-      return word 
+      return word
     end
   end
 
   def self.set_key_details
-    @key_details = Key.find(@key_given_in_params);  
+    @key_details = Key.find(@key_given_in_params);
     key_user = @key_details.user_id  #user of this key
     @user_subscription_plan = User.find(key_user).subscription_choice
   end
@@ -62,7 +61,7 @@ class Word < ApplicationRecord
   def self.authenticate_key
     begin
       @key_given_in_params = Key.find_by(name:@name_of_key).id
-      return 
+      return
     rescue => exception
       return "invalid key"
     end
