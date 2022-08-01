@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   get 'fortytwoword/:word/defination',to: "fortytwoword#defination" 
   get 'fortytwoword/:word/relation',to: "fortytwoword#wordRelation" 
   match '*unmatched', to: 'application#route_not_found', via: :all
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 26724bb17d07ee1eaf224f1489c1064c63d32f26
 get 'home/profile'
   root "home#index"
 
