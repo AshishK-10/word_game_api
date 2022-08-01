@@ -1,22 +1,31 @@
 class Key < ApplicationRecord
   belongs_to:user
   validates :name, uniqueness: true
-  def create_key(choice)
-    if choice == 1
-      max_keys = 5
-    elsif choice == 2
-      max_keys = 10
-    else
-      max_keys = 1000
-    end
- end
+  before_create :new_key
 
-  def self.new_key(keys_from_user,current_user)
-   name_of_key = SecureRandom.alphanumeric(75)
-   new_key = Key.new
-   new_key.name = name_of_key
-   new_key.count = 0
-   new_key.user = current_user
-   return new_key
- end
+  def self.get_keys(choice)
+    {1=> 5, 2=> 10, 3=> 10000}[choice]
+  end
+
+  def new_key
+    self.count = 0
+    self.name = SecureRandom.alphanumeric(75)
+  end
+
+  def self.authenticate(user_key)
+    key = Key.find_by(name: user_key)
+    if key
+      choice = {1=> 500, 2=>2000, 3=>10000}[key.user.subscription_choice]
+      if (key.count >= 500 && choice == 1 || key.count >= 2000 && choice == 2 || key.count >= 10000 && choice == 3)
+        false
+      else
+        key.count += 1
+        key.save
+        true
+      end
+    else
+      false
+    end
+  end
+
 end
