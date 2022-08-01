@@ -21,7 +21,6 @@ class Key < ApplicationRecord
       else
         key.count += 1
         key.save
-        true
       end
     else
       false
